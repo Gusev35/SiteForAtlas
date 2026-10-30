@@ -173,7 +173,6 @@
   .comment .date { color: #94a3b8; font-size: 0.85rem; }
   .comment .text { color: #475569; white-space: pre-wrap; }
 
-  /* ===== ТРЕНИНГ ===== */
   .video-wrapper {
     position: relative; padding-bottom: 56.25%; height: 0;
     overflow: hidden; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.15);
@@ -188,7 +187,6 @@
 </head>
 <body>
 
-<!-- ===== НАВИГАЦИЯ ===== -->
 <nav>
   <a href="#about">О проекте</a>
   <a href="#team">Команда</a>
@@ -198,7 +196,6 @@
   <span class="user-badge" id="navUserBadge"></span>
 </nav>
 
-<!-- ===== О ПРОЕКТЕ ===== -->
 <section id="about">
   <h2>О проекте</h2>
   <p><strong>«Атлас тела человека»</strong> — интерактивное обучающее приложение на платформе <strong>Unity</strong>, предназначенное для изучения анатомии человека в формате 3D. Проект сочетает наглядную визуализацию, игровые механики и понятную навигацию по системам организма.</p>
@@ -210,7 +207,7 @@
     </div>
     <div class="subblock">
       <h3>Используемые технологии</h3>
-      <p>Unity (C#), Blender для 3D-моделей, Figma для проектирования интерфейса. В дальнейшем — интеграция с базой данных для прогресса обучения.</p>
+      <p>Unity (C#), Blender для 3D-моделей, Figma для проектирования интерфейса.</p>
     </div>
     <div class="subblock">
       <h3>Этапы разработки</h3>
@@ -219,7 +216,6 @@
   </div>
 </section>
 
-<!-- ===== КОМАНДА ===== -->
 <section id="team">
   <h2>Команда проекта</h2>
   <p>Фотографии участников хранятся в папке <code>Team/</code>. Если файл отсутствует — отображается заглушка с инициалом.</p>
@@ -259,15 +255,12 @@
   </div>
 </section>
 
-<!-- ===== БЛОГ ===== -->
 <section id="blog">
   <h2>Блог проекта</h2>
   <p>Отчёты и новости о ходе разработки. Отчёты хранятся в браузере и могут быть экспортированы в папку <code>Reports/</code>.</p>
   <p class="blog-hint" id="blogHint"></p>
 
   <div class="blog-toolbar">
-    <button class="btn btn-secondary" id="btnExport">📥 Экспорт в Reports/blog.json</button>
-    <button class="btn btn-secondary" id="btnImport">📤 Импорт из файла</button>
     <input type="file" id="fileImport" accept=".json" style="display:none;">
     <button class="btn btn-danger" id="btnClear">🗑 Очистить всё</button>
   </div>
@@ -281,7 +274,6 @@
   <div class="comments-list" id="commentsList"></div>
 </section>
 
-<!-- ===== ТРЕНИНГ ===== -->
 <section id="training">
   <h2>Тренинг</h2>
   <p>Видео-демонстрация работы с приложением «Атлас тела человека» на Unity.</p>
@@ -300,9 +292,7 @@
 </footer>
 
 <script>
-/* ============================================================
-   ДАННЫЕ КОМАНДЫ (с путями к фото в папке Team/)
-============================================================ */
+
 const TEAM = [
   { name: 'Столбова Алина',    group: 'ПИЭ-23',   role: 'Проект-менеджер',           photo: 'Team/StolbovaAlina.png' },
   { name: 'Кропотова Вера',    group: 'ПМИ-25',   role: 'Аналитик + Технический писатель', photo: 'Team/KropotovaVera.png' },
@@ -315,9 +305,7 @@ const TEAM = [
   { name: 'Левкин Андрей',     group: 'МОАИС-23', role: 'Разработчик',               photo: 'Team/LevkinAndrey.png' }
 ];
 
-/* ============================================================
-   УТИЛИТЫ
-============================================================ */
+
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;

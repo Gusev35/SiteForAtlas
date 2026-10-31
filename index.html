@@ -43,7 +43,7 @@
   section h3 { color: #0ea5e9; margin: 1.5rem 0 0.5rem; font-size: 1.3rem; }
   section p { margin-bottom: 1rem; color: #475569; }
 
-  /* ===== О ПРОЕКТЕ ===== */
+
   .subblocks {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -57,7 +57,7 @@
   .subblock:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(56, 189, 248, 0.2); }
   .subblock h3 { margin-top: 0; color: #1e293b; }
 
-  /* ===== КОМАНДА ===== */
+
   .team-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -79,7 +79,6 @@
   .team-card .group { color: #0ea5e9; font-size: 0.88rem; margin: 0.2rem 0; font-weight: 600; }
   .team-card .role { color: #64748b; font-size: 0.9rem; font-style: italic; }
 
-  /* ===== АВТОРИЗАЦИЯ ===== */
   .auth-container { max-width: 440px; margin: 0 auto; }
   .auth-tabs {
     display: flex; gap: 0.5rem; margin-bottom: 1.5rem;
@@ -128,7 +127,6 @@
   }
   .btn-logout:hover { background: #dc2626; }
 
-  /* ===== БЛОГ ===== */
   .blog-toolbar {
     display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.5rem;
   }
@@ -223,7 +221,6 @@
   <div class="team-grid" id="teamGrid"></div>
 </section>
 
-<!-- ===== АВТОРИЗАЦИЯ ===== -->
 <section id="auth">
   <h2>Авторизация</h2>
 
@@ -279,7 +276,7 @@
   <p>Видео-демонстрация работы с приложением «Атлас тела человека» на Unity.</p>
   <div class="video-wrapper">
     <iframe
-      src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+      src="https://vkvideo.ru/video449367063_456239345"
       title="Видео тренинга"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen>
@@ -319,9 +316,7 @@ function formatDate(iso) {
   });
 }
 
-/* ============================================================
-   РЕНДЕР КОМАНДЫ
-============================================================ */
+
 function renderTeam() {
   const grid = document.getElementById('teamGrid');
   grid.innerHTML = '';
@@ -342,9 +337,6 @@ function renderTeam() {
   });
 }
 
-/* ============================================================
-   АВТОРИЗАЦИЯ
-============================================================ */
 const USERS_KEY = 'app_users_v1';
 const SESSION_KEY = 'app_session_v1';
 
@@ -443,9 +435,6 @@ function renderAuth() {
   updateBlogHint();
 }
 
-/* ============================================================
-   БЛОГ (с экспортом/импортом из папки Reports/)
-============================================================ */
 const STORAGE_KEY = 'blog_reports_v1';
 const commentForm = document.getElementById('commentForm');
 const authorInput = document.getElementById('authorInput');
@@ -506,7 +495,6 @@ commentForm.addEventListener('submit', (e) => {
   renderComments();
 });
 
-/* --- Экспорт в Reports/blog.json --- */
 document.getElementById('btnExport').addEventListener('click', () => {
   const data = loadComments();
   if (data.length === 0) { alert('Нет отчётов для экспорта.'); return; }
@@ -514,13 +502,12 @@ document.getElementById('btnExport').addEventListener('click', () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'blog.json';  // <-- положите этот файл в папку Reports/
+  a.download = 'blog.json'; 
   a.click();
   URL.revokeObjectURL(url);
   alert('Файл blog.json скачан. Поместите его в папку Reports/ вашего репозитория.');
 });
 
-/* --- Импорт из файла (Reports/blog.json) --- */
 document.getElementById('btnImport').addEventListener('click', () => {
   document.getElementById('fileImport').click();
 });
@@ -533,7 +520,6 @@ document.getElementById('fileImport').addEventListener('change', (e) => {
       const imported = JSON.parse(ev.target.result);
       if (!Array.isArray(imported)) throw new Error('Неверный формат');
       const existing = loadComments();
-      // Объединяем без дубликатов (по author+date+text)
       const map = new Map();
       [...existing, ...imported].forEach(item => {
         const key = item.author + '|' + item.date + '|' + item.text;
@@ -550,21 +536,16 @@ document.getElementById('fileImport').addEventListener('change', (e) => {
   e.target.value = '';
 });
 
-/* --- Очистка --- */
 document.getElementById('btnClear').addEventListener('click', () => {
   if (!confirm('Удалить все отчёты из локального хранилища?')) return;
   localStorage.removeItem(STORAGE_KEY);
   renderComments();
 });
 
-/* ============================================================
-   АВТОЗАГРУЗКА Reports/blog.json ПРИ СТАРТЕ
-   (если файл лежит в репозитории — отчёты появятся у всех)
-============================================================ */
 async function tryLoadReportsFromFolder() {
   try {
     const res = await fetch('Reports/blog.json', { cache: 'no-store' });
-    if (!res.ok) return;                     // файла нет — молча выходим
+    if (!res.ok) return;                     
     const data = await res.json();
     if (!Array.isArray(data)) return;
     const existing = loadComments();
@@ -575,12 +556,10 @@ async function tryLoadReportsFromFolder() {
     });
     saveComments(Array.from(map.values()));
     renderComments();
-  } catch (e) { /* файла нет — это нормально */ }
+  } catch (e) {  }
 }
 
-/* ============================================================
-   ИНИЦИАЛИЗАЦИЯ
-============================================================ */
+
 renderTeam();
 renderComments();
 renderAuth();

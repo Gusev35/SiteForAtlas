@@ -264,12 +264,6 @@
   <p>Отчёты и новости о ходе разработки. Отчёты хранятся в браузере и могут быть экспортированы в папку <code>Reports/</code>.</p>
   <p class="blog-hint" id="blogHint"></p>
 
-  <div class="blog-toolbar">
-    <button class="btn btn-secondary" id="btnExport">📥 Экспорт в Reports/blog.json</button>
-    <button class="btn btn-secondary" id="btnImport">📤 Импорт из файла</button>
-    <input type="file" id="fileImport" accept=".json" style="display:none;">
-    <button class="btn btn-danger" id="btnClear">🗑 Очистить всё</button>
-  </div>
 
   <form class="comment-form" id="commentForm">
     <input type="text" id="authorInput" placeholder="Ваше имя" required maxlength="60">
@@ -347,7 +341,6 @@ function renderTeam() {
   });
 }
 
-/* ===== АВТОРИЗАЦИЯ ===== */
 const USERS_KEY = 'app_users_v1';
 const SESSION_KEY = 'app_session_v1';
 
@@ -446,7 +439,6 @@ function renderAuth() {
   updateBlogHint();
 }
 
-/* ===== БЛОГ ===== */
 const STORAGE_KEY = 'blog_reports_v1';
 const commentForm = document.getElementById('commentForm');
 const authorInput = document.getElementById('authorInput');
@@ -554,7 +546,6 @@ document.getElementById('btnClear').addEventListener('click', () => {
   renderComments();
 });
 
-/* ===== АВТОЗАГРУЗКА ОТЧЁТОВ ИЗ ПАПКИ Reports/ ===== */
 async function tryLoadReportsFromFolder() {
   const files = [
     'Reports/2026-08-04-pm.json',
@@ -570,7 +561,7 @@ async function tryLoadReportsFromFolder() {
       if (!res.ok) continue;
       const data = await res.json();
       if (Array.isArray(data)) all.push(...data);
-    } catch (e) { /* файла нет — пропускаем */ }
+    } catch (e) { }
   }
   if (all.length === 0) return;
   const existing = loadComments();
@@ -583,7 +574,6 @@ async function tryLoadReportsFromFolder() {
   renderComments();
 }
 
-/* ===== ИНИЦИАЛИЗАЦИЯ ===== */
 renderTeam();
 renderComments();
 renderAuth();

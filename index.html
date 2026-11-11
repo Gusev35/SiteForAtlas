@@ -43,7 +43,6 @@
   section h3 { color: #0ea5e9; margin: 1.5rem 0 0.5rem; font-size: 1.3rem; }
   section p { margin-bottom: 1rem; color: #475569; }
 
-
   .subblocks {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -56,7 +55,6 @@
   }
   .subblock:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(56, 189, 248, 0.2); }
   .subblock h3 { margin-top: 0; color: #1e293b; }
-
 
   .team-grid {
     display: grid;
@@ -73,6 +71,15 @@
     width: 90px; height: 90px; border-radius: 50%;
     object-fit: cover; margin: 0 auto 1rem; display: block;
     background: #38bdf8; border: 3px solid #fff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  }
+  .team-card .avatar-initial {
+    width: 90px; height: 90px; border-radius: 50%;
+    margin: 0 auto 1rem;
+    background: #38bdf8; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; font-weight: bold;
+    border: 3px solid #fff;
     box-shadow: 0 3px 10px rgba(0,0,0,0.15);
   }
   .team-card .name { font-size: 1.1rem; font-weight: 700; color: #1e293b; }
@@ -258,6 +265,8 @@
   <p class="blog-hint" id="blogHint"></p>
 
   <div class="blog-toolbar">
+    <button class="btn btn-secondary" id="btnExport">📥 Экспорт в Reports/blog.json</button>
+    <button class="btn btn-secondary" id="btnImport">📤 Импорт из файла</button>
     <input type="file" id="fileImport" accept=".json" style="display:none;">
     <button class="btn btn-danger" id="btnClear">🗑 Очистить всё</button>
   </div>
@@ -276,12 +285,13 @@
   <p>Видео-демонстрация работы с приложением «Атлас тела человека» на Unity.</p>
   <div class="video-wrapper">
     <iframe
-      src="https://vkvideo.ru/video-242791564_456239017?list=ln-ajDRiitGdDZBHE6Z4h"
+      src="https://vk.com/video_ext.php?oid=-242791564&id=456239017&hd=2"
       title="Видео тренинга"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;"
       allowfullscreen>
     </iframe>
   </div>
+  <p style="margin-top:1rem;font-size:0.9rem;color:#94a3b8;">Если видео не отображается — откройте его напрямую: <a href="https://vkvideo.ru/video-242791564_456239017" target="_blank" rel="noopener">ссылка на VK Видео</a>.</p>
 </section>
 
 <footer>
@@ -302,7 +312,6 @@ const TEAM = [
   { name: 'Левкин Андрей',     group: 'МОАИС-23', role: 'Разработчик',               photo: 'Team/LevkinAndrey.png' }
 ];
 
-
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
@@ -316,7 +325,7 @@ function formatDate(iso) {
   });
 }
 
-
+/* ===== КОМАНДА ===== */
 function renderTeam() {
   const grid = document.getElementById('teamGrid');
   grid.innerHTML = '';
@@ -328,7 +337,8 @@ function renderTeam() {
       <img class="avatar-img"
            src="${person.photo}"
            alt="${escapeHtml(person.name)}"
-           onerror="this.outerHTML='<div class=\\'avatar-img\\' style=\\'display:flex;align-items:center;justify-content:center;color:#fff;font-size:2rem;font-weight:bold;\\'>${initial}</div>'">
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="avatar-initial" style="display:none;">${escapeHtml(initial)}</div>
       <div class="name">${escapeHtml(person.name)}</div>
       <div class="group">${escapeHtml(person.group)}</div>
       <div class="role">${escapeHtml(person.role)}</div>
@@ -337,6 +347,7 @@ function renderTeam() {
   });
 }
 
+/* ===== АВТОРИЗАЦИЯ ===== */
 const USERS_KEY = 'app_users_v1';
 const SESSION_KEY = 'app_session_v1';
 
@@ -435,6 +446,7 @@ function renderAuth() {
   updateBlogHint();
 }
 
+/* ===== БЛОГ ===== */
 const STORAGE_KEY = 'blog_reports_v1';
 const commentForm = document.getElementById('commentForm');
 const authorInput = document.getElementById('authorInput');
@@ -502,7 +514,7 @@ document.getElementById('btnExport').addEventListener('click', () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'blog.json'; 
+  a.download = 'blog.json';
   a.click();
   URL.revokeObjectURL(url);
   alert('Файл blog.json скачан. Поместите его в папку Reports/ вашего репозитория.');
@@ -542,24 +554,36 @@ document.getElementById('btnClear').addEventListener('click', () => {
   renderComments();
 });
 
+/* ===== АВТОЗАГРУЗКА ОТЧЁТОВ ИЗ ПАПКИ Reports/ ===== */
 async function tryLoadReportsFromFolder() {
-  try {
-    const res = await fetch('Reports/blog.json', { cache: 'no-store' });
-    if (!res.ok) return;                     
-    const data = await res.json();
-    if (!Array.isArray(data)) return;
-    const existing = loadComments();
-    const map = new Map();
-    [...data, ...existing].forEach(item => {
-      const key = item.author + '|' + item.date + '|' + item.text;
-      map.set(key, item);
-    });
-    saveComments(Array.from(map.values()));
-    renderComments();
-  } catch (e) {  }
+  const files = [
+    'Reports/2026-08-04-pm.json',
+    'Reports/2026-09-11-analytics.json',
+    'Reports/2026-10-01-developers.json',
+    'Reports/2026-10-15-developers.json',
+    'Reports/blog.json'
+  ];
+  const all = [];
+  for (const f of files) {
+    try {
+      const res = await fetch(f, { cache: 'no-store' });
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (Array.isArray(data)) all.push(...data);
+    } catch (e) { /* файла нет — пропускаем */ }
+  }
+  if (all.length === 0) return;
+  const existing = loadComments();
+  const map = new Map();
+  [...all, ...existing].forEach(item => {
+    const key = item.author + '|' + item.date + '|' + item.text;
+    map.set(key, item);
+  });
+  saveComments(Array.from(map.values()));
+  renderComments();
 }
 
-
+/* ===== ИНИЦИАЛИЗАЦИЯ ===== */
 renderTeam();
 renderComments();
 renderAuth();
